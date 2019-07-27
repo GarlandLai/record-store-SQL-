@@ -4,6 +4,8 @@ require('./lib/album')
 require('pry')
 require('./lib/song')
 also_reload('lib/**/*.rb')
+require("pg")
+DB = PG.connect({:dbname => "record_store"})
 
 get ('/') do
   @albums = Album.all
@@ -60,11 +62,11 @@ delete ('/albums/:id') do
   erb(:albums)
 end
 
-# Get the detail for a specific song such as lyrics and songwriters.
-get ('/albums/:id/songs/:song_id') do
-  @song = Song.find(params[:song_id].to_i())
-  erb(:song)
-end
+# # Get the detail for a specific song such as lyrics and songwriters.
+# get ('/albums/:id/songs/:song_id') do
+#   @song = Song.find(params[:song_id].to_i())
+#   erb(:song)
+# end
 
 # Post a new song. After the song is added, Sinatra will route to the view for the album the song belongs to.
 post ('/albums/:id/songs') do
@@ -90,15 +92,15 @@ delete ('/albums/:id/songs/:song_id') do
   erb(:album)
 end
 
-get ('/albums/:id/songs/:song_id/lyrics') do
-  @song = Song.find(params[:song_id].to_i())
-  erb(:lyrics)
-end
-
-post ('/albums/:id/songs/:song_id/lyrics') do
-  lyrics = params[:lyrics]
-  song = Song.new(name, lyrics)
-  song.save()
-  @song = Song.new()
-  erb(:albums)
-end
+# get ('/albums/:id/songs/:song_id/lyrics') do
+#   @song = Song.find(params[:song_id].to_i())
+#   erb(:lyrics)
+# end
+#
+# post ('/albums/:id/songs/:song_id/lyrics') do
+#   lyrics = params[:lyrics]
+#   song = Song.new(name, lyrics)
+#   song.save()
+#   @song = Song.new()
+#   erb(:albums)
+# end

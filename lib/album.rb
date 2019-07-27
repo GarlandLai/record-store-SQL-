@@ -1,42 +1,45 @@
 require ('pry')
 
 class Album
-  attr_reader :id
-  attr_accessor :name, :artist, :genre, :year
-  @@albums = {}
-  @@total_rows = 0
+  attr_accessor :name
 
-  def initialize(name, artist, genre, year, id)
-    @name = name
-    @artist = artist
-    @genre = genre
-    @year = year
-    @id = id || @@total_rows +=1
+  def initialize(attributes)
+    @name = attributes.fetch(:name)
+    @id = attributes.fetch(:id) # Note that this line has been changed.
   end
 
   def self.all
-    @@albums.values()
+    returned_albums = DB.exec("SELECT * FROM albums;")
+    albums = []
+    returned_albums.each() do |album|
+      name = album.fetch("name")
+      id = album.fetch("id").to_i
+      albums.push(Album.new({:name => name, :id => id}))
+    end
+    albums
   end
 
   def save
-    @@albums[self.id] = Album.new(self.name, self.artist, self.genre, self.year, self.id)
-    Album.sort
+    result = DB.exec("INSERT INTO albums (name) VALUES ('#{@name}') RETURNING id;")
+    @id = result.first().fetch("id").to_i
   end
 
   def == (album_to_compare)
     self.name() == album_to_compare.name()
-    self.artist() == album_to_compare.artist()
-    self.genre() == album_to_compare.genre()
-    self.year() == album_to_compare.year()
+    # self.artist() == album_to_compare.artist()
+    # self.genre() == album_to_compare.genre()
+    # self.year() == album_to_compare.year()
   end
 
   def self.clear
-    @@albums = {}
-    @@total_rows = 0
+    DB.exec("DELETE FROM albums *;")
   end
 
   def self.find(id)
-    @@albums[id]
+    album = DB.exec("SELECT * FROM albums WHERE id = #{id};").first
+    name = album.fetch("name")
+    id = album.fetch("id").to_i
+    Album.new({:name => name, :id => id})
   end
 
   def self.search(name)
@@ -51,16 +54,13 @@ class Album
   end
 
 
-  def update(name,artist,genre,year)
-    self.name = name.length > 0 ? name : self.name
-    self.artist = artist.length > 0 ? artist : self.artist
-    self.genre = genre.length > 0 ? genre : self.genre
-    self.year = year.length > 0 ? year : self.year
-    @@albums[self.id] = Album.new(self.name,self.artist, self.genre, self.year, self.id)
+  def update(name)
+    @name = name
+    DB.exec("UPDATE albums SET name = '#{@name}' WHERE id = #{@id};")
   end
 
   def delete
-    @@albums.delete(self.id)
+    DB.exec("DELETE FROM albums WHERE id = #{@id};")
   end
 
   def songs
