@@ -6,13 +6,24 @@ require('spec_helper')
 
 describe '#Song' do
 
-#   before(:each) do
-#     Album.clear()
-#     Song.clear()
-#     @album = Album.new("Giant Steps","Ben", "folk", "1990", nil)
-#     @album.save()
-#   end
-#
+  before(:each) do
+    Album.clear()
+    Song.clear()
+    @album = Album.new("Giant Steps","Ben", "folk", "1990", nil)
+    @album.save()
+  end
+
+  describe('#delete') do
+  it("deletes all songs belonging to a deleted album") do
+    album = Album.new({:name => "A Love Supreme", :id => nil})
+    album.save()
+    song = Song.new({:name => "Naima", :album_id => album.id, :id => nil})
+    song.save()
+    album.delete()
+    expect(Song.find(song.id)).to(eq(nil))
+  end
+end
+
 #   describe('#==') do
 #     it("is the same song if it has the same attributes as another song") do
 #       song = Song.new("Naima", @album.id, nil)

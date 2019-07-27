@@ -43,15 +43,15 @@ describe '#Album' do
     end
   end
   #
-  describe('.find') do
-    it("finds an album by id") do
-      album = Album.new({ :name => "Giant Steps", :id=>nil})
-      album.save()
-      album2 = Album.new({:name =>"Blue",:id => nil})
-      album2.save()
-      expect(Album.find(album.id)).to(eq(album))
-    end
-  end
+  # describe('.find') do
+  #   it("finds an album by id") do
+  #     album = Album.new({:name => "Giant Steps", :id=>nil})
+  #     album.save()
+  #     album2 = Album.new({:name =>"Blue",:id => nil})
+  #     album2.save()
+  #     expect(Album.find(album.id)).to(eq(album))
+  #   end
+  # end
 
   describe('#update') do
     it("updates an album by id") do
